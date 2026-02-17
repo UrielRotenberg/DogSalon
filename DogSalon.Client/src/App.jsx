@@ -1,34 +1,55 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import axios from 'axios'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [user, setUser] = useState({
+    username: '',
+    passwordHash: '',
+    firstName: ''
+  });
+
+  const handleRegister = async () => {
+    try {
+      const response = await axios.post('https://localhost:7133/api/Auth/register', user);
+      alert("נרשמת בהצלחה! הודעת השרת: " + response.data.message);
+    } catch (error) {
+      console.error(error);
+      alert("שגיאה ברישום: " + (error.response?.data || error.message));
+    }
+  };
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
+    <div className="registration-container" style={{ direction: 'rtl' }}>
+      <h1>רישום למספרת הכלבים 🐶</h1>
+      
       <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', maxWidth: '300px', margin: '0 auto' }}>
+          <input 
+            type="text" 
+            placeholder="שם פרטי" 
+            onChange={(e) => setUser({...user, firstName: e.target.value})} 
+          />
+          <input 
+            type="text" 
+            placeholder="שם משתמש" 
+            onChange={(e) => setUser({...user, username: e.target.value})} 
+          />
+          <input 
+            type="password" 
+            placeholder="סיסמה" 
+            onChange={(e) => setUser({...user, passwordHash: e.target.value})} 
+          />
+          <button onClick={handleRegister}>
+            צור חשבון חדש
+          </button>
+        </div>
       </div>
+
       <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
+        הנתונים יישמרו ישירות בבסיס הנתונים SQL Server
       </p>
-    </>
+    </div>
   )
 }
 
