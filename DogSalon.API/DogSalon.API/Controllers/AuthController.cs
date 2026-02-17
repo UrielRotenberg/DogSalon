@@ -23,11 +23,11 @@ namespace DogSalon.API.Controllers
             {
                 return BadRequest("Username already exists");
             }
-
+            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash);
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = "Registration successful!" });
+            return Ok(new { message = "Registration successful with secure password!" });
         }
     }
 }
