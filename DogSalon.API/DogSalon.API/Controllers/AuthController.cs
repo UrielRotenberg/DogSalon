@@ -42,7 +42,12 @@ namespace DogSalon.API.Controllers
                 return Unauthorized("Invalid username or password");
             }
 
-            return Ok(new { message = $"Welcome back, {user.FirstName}!" });
+            return Ok(new
+            {
+                message = $"Welcome back, {user.FirstName}!",
+                userId = user.Id,
+                firstName = user.FirstName
+            });
         }
     }
 }

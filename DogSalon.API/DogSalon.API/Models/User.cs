@@ -10,7 +10,6 @@ namespace DogSalon.API.Models
         public string Username { get; set; } = string.Empty;
         [Required]
         public string PasswordHash { get; set; } = string.Empty;
-        [Required]
-        public string FirstName { get; set; } = string.Empty;
+        public string? FirstName { get; set; }
     }
 }
