@@ -1,0 +1,164 @@
+.formCard {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 20px;
+  border: 1px solid #e3d5ca;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.formTitle {
+  color: #5d4037;
+  text-align: center;
+  margin-bottom: 25px;
+  width: 100%;
+}
+
+.inputsWrapper {
+  width: 100%;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.inputField, .selectField {
+  width: 100%;
+  padding: 14px 15px;
+  margin-bottom: 15px;
+  border: 1px solid #d7ccc8;
+  border-radius: 12px;
+  background: #fdfaf9;
+  font-size: 16px;
+  outline: none;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.selectField {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%235d4037' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: left 25px center;
+  background-size: 18px;
+}
+
+.errorBorder {
+  border: 2px solid #e74c3c !important;
+  background-color: #fff5f5;
+}
+
+.errorGrid {
+  border: 2px solid #e74c3c;
+  padding: 10px;
+  border-radius: 12px;
+  background-color: #fff5f5;
+}
+
+.timeGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin: 10px 0 20px 0;
+  width: 100%;
+}
+
+.timeSlot {
+  padding: 12px 5px;
+  border: 1px solid #d7ccc8;
+  border-radius: 10px;
+  background: white;
+  color: #5d4037;
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.2s;
+  text-align: center;
+}
+
+.selectedTime {
+  background: #795548 !important;
+  color: white !important;
+  border-color: #5d4037;
+}
+
+.takenTime, .passedTime {
+  opacity: 0.4;
+  cursor: not-allowed;
+  background: #eee !important;
+}
+
+.submitBtn {
+  width: 100%;
+  padding: 15px;
+  background: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.submitBtn:hover {
+  background: #43a047;
+}
+
+.cancelBtn {
+  width: 100%;
+  padding: 12px;
+  background: #757575;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  margin-top: 12px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.cancelBtn:hover {
+  background: #616161;
+}
+
+.businessHours {
+  width: 100%;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 1px dashed #e3d5ca;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.hoursTitle {
+  color: #5d4037;
+  font-size: 15px;
+  margin: 0 0 5px 0;
+  font-weight: 800;
+  text-align: center;
+}
+
+.hoursRow {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #8d6e63;
+  padding: 0 10px;
+}
+
+.hoursRow span:first-child {
+  font-weight: 600;
+}
+
+.closed {
+  color: #e74c3c;
+  font-weight: 800;
+}
+
+.helperText {
+  color: #8d6e63;
+  font-size: 14px;
+  margin: 15px 0;
+}
