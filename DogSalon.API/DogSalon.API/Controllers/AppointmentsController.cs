@@ -23,18 +23,18 @@ namespace DogSalon.API.Controllers
             var appointments = await (from app in _context.Appointments
                                       join user in _context.Users on app.UserId equals user.Id into userJoin
                                       from u in userJoin.DefaultIfEmpty()
-                                      select new Appointment
+                                      select new
                                       {
-                                          Id = app.Id,
-                                          UserId = app.UserId,
-                                          DogName = app.DogName,
-                                          DogSize = app.DogSize,
-                                          AppointmentDate = app.AppointmentDate,
-                                          Status = app.Status,
-                                          CreatedAt = app.CreatedAt,
-                                          Price = app.Price,
-                                          Discount = app.Discount,
-                                          DurationMinutes = app.DurationMinutes,
+                                          app.Id,
+                                          app.UserId,
+                                          app.DogName,
+                                          app.DogSize,
+                                          app.AppointmentDate,
+                                          app.Status,
+                                          app.CreatedAt,
+                                          app.Price,
+                                          app.Discount,
+                                          app.DurationMinutes,
                                           FirstName = u != null ? u.FirstName : "אורח"
                                       }).ToListAsync();
 
