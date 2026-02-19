@@ -1,3 +1,5 @@
+<div dir="rtl">
+
 # 🐾 DogStyle - Dog Grooming Salon System
 
 מערכת מלאה לניהול תורים למספרת כלבים בוטיק, המשלבת Backend ב-.NET ו-Frontend ב-React.
@@ -15,3 +17,5 @@
 1. יש לעדכן את ה-Connection String בקובץ `appsettings.json` בשרת.
 2. הרצת ה-API (תיקיית DogSalon.API).
 3. הרצת ה-Client (תיקיית DogSalon.Client) באמצעות `npm install` ולאחר מכן `npm run dev`.
+
+</div>
