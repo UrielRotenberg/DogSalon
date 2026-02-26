@@ -1,21 +1,48 @@
-<div dir="rtl">
+# 🐾 DogStyle | מערכת ניהול תורים חכמה למספרות כלבים
 
-# 🐾 DogStyle - Dog Grooming Salon System
+מערכת Full-Stack מתקדמת לניהול תורים, המבוססת על **.NET 10 Web API** ו-**React**. הפרויקט מדגים שימוש בארכיטקטורת שכבות, ניהול נתונים מאובטח וחווית משתמש חלקה.
 
-מערכת מלאה לניהול תורים למספרת כלבים בוטיק, המשלבת Backend ב-.NET ו-Frontend ב-React.
+## 🛠 טכנולוגיות וארכיטקטורה
 
-## 🚀 דגשים טכניים ומימוש דרישות
-* **SQL Procedures:** שימוש בפרוצדורה `GetUserAppointmentCount` לניהול לוגיקת הנחות בשרת.
-* **SQL View:** יצירת `vw_FullAppointmentDetails` המאפשרת שליפת נתונים מורכבת ויעילה.
-* **Business Logic:** חישוב זמנים ומחירים אוטומטי (30/60/90 דקות) והנחה של 10% החל מהתור הרביעי.
-* **Security & UX:** חסימת ביטול תורים באותו היום, הצפנת סיסמאות, ותמיכה מלאה במקש Enter בטפסים.
+### **Backend (.NET 10)**
+* **Layered Architecture:** הפרדה מוחלטת בין Controllers, Services, ו-Repositories לשמירה על קוד נקי וקל לתחזוקה.
+* **Security:** אימות מבוסס JWT עם ניהול הרשאות מבוסס תפקידים (RBAC).
+* **Global Exception Handling:** שימוש ב-Middleware לטיפול בשגיאות בצורה אחידה (Problem Details).
+* **Concurrency Management:** ולידציה בשרת למניעת חפיפת תורים ושמירה על שלמות הנתונים.
 
-## 💾 הקמת בסיס הנתונים
-כדי להקים את הסביבה, יש להריץ את הסקריפט המצורף ב-Repository בשם: `init_db.sql`.
+### **Database (SQL Server)**
+* **Advanced Logic:** מימוש לוגיקה עסקית (תמחור, זמנים והנחות) דרך **Stored Procedures** לשיפור ביצועים.
+* **Data Abstraction:** שימוש ב-**SQL View** אופטימלי (`vw_FullAppointmentDetails`) לחישובים דינמיים כמו זמן סיום (`EndTime`).
+* **Optimization:** שימוש אסטרטגי ב-**Indexes** על עמודות קריטיות (`AppointmentDate`, `UserId`) לביצועי שליפה מהירים.
 
-## 🛠 הרצה מקומית
-1. יש לעדכן את ה-Connection String בקובץ `appsettings.json` בשרת.
-2. הרצת ה-API (תיקיית DogSalon.API).
-3. הרצת ה-Client (תיקיית DogSalon.Client) באמצעות `npm install` ולאחר מכן `npm run dev`.
+### **Frontend (React)**
+* **State Management:** שימוש ב-React Hooks ו-Context API לניהול מצב התחברות גלובלי.
+* **UX Excellence:** משוב בזמן אמת באמצעות **Toast Notifications** וממשק Dashboard הכולל טבלאות נפרדות לתורים אישיים ולוח כללי.
+* **Admin Capabilities:** גישה מורחבת למנהלים לצפייה בנתונים פיננסיים רגישים וניהול הלוח הכללי.
 
-</div>
+---
+
+## 🚀 לוגיקה עסקית ופיצ'רים
+* **תמחור אוטומטי:** חישוב דינמי לפי גודל הכלב (קטן: 30 דקות, בינוני: 60 דקות, גדול: 90 דקות).
+* **תכנית נאמנות:** מתן **10% הנחה** אוטומטית החל מהתור הרביעי של הלקוח.
+* **אכיפת מדיניות:** חסימת אפשרות לביטול או עריכת תור ביום האירוע לשמירה על הכנסות המספרה.
+
+---
+
+## 💻 התקנה והרצה
+
+### **1. הגדרת בסיס הנתונים**
+1. פתח את ה-**SQL Server Management Studio (SSMS)**.
+2. הרץ את הסקריפט `Database/init_db.sql` ליצירת הטבלאות, המבטים והפרוצדורות.
+3. *(אופציונלי)* עדכן משתמש בטבלת ה-Users ל-`IsAdmin = 1` כדי לקבל הרשאות מנהל.
+
+### **2. הגדרת ה-Backend**
+1. נווט לקובץ `DogSalon.API/appsettings.json`.
+2. עדכן את ה-`ConnectionStrings` בהתאם לשרת ה-SQL המקומי שלך.
+3. הרץ את הפרויקט דרך Visual Studio או באמצעות הפקודה `dotnet run`.
+
+### **3. הרצת ה-Frontend**
+```bash
+cd DogSalon.Client
+npm install
+npm run dev
