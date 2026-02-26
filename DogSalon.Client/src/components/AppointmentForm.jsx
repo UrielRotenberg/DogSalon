@@ -165,19 +165,33 @@ const AppointmentForm = ({
           </button>
         )}
 
-        <div className={styles.businessHours}>
-          <h4 className={styles.hoursTitle}>🕒 שעות פעילות:</h4>
-          <div className={styles.hoursRow}>
-            <span>א' - ה':</span>
-            <span>09:00 - 19:00</span>
+       <div className={styles.businessHours}>
+          <h4 className={styles.hoursTitle}>🕒 שעות פעילות</h4>
+          
+          <div className={styles.hoursGrid}>
+            <div className={styles.hoursRow}>
+              <span className={styles.dayLabel}>א' - ה'</span>
+              <span className={styles.timeLabel}>09:00 - 19:00</span>
+            </div>
+            <div className={styles.hoursRow}>
+              <span className={styles.dayLabel}>שישי</span>
+              <span className={styles.timeLabel}>09:00 - 14:30</span>
+            </div>
+            <div className={`${styles.hoursRow} ${styles.closedRow}`}>
+              <span className={styles.dayLabel}>שבת</span>
+              <span className={styles.timeLabel}>סגור 🚩</span>
+            </div>
           </div>
-          <div className={styles.hoursRow}>
-            <span>שישי וערבי חג:</span>
-            <span>09:00 - 14:30</span>
-          </div>
-          <div className={`${styles.hoursRow} ${styles.closed}`}>
-            <span>שבת וחג:</span>
-            <span>סגור 🚩</span>
+
+          <div className={styles.contactFooter}>
+            <div className={styles.contactPill}>
+              <span className={styles.pillIcon}>📍</span>
+              <span>רח' אימבר 14, פתח תקווה</span>
+            </div>
+            <div className={styles.contactPill}>
+              <span className={styles.pillIcon}>📞</span>
+              <span>03-3737392</span>
+            </div>
           </div>
         </div>
       </div>

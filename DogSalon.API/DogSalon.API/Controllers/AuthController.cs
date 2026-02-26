@@ -1,5 +1,7 @@
-﻿using DogSalon.API.Data;
+﻿using DogSalon.API.Contracts;
+using DogSalon.API.Data;
 using DogSalon.API.Models;
+using DogSalon.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,44 +12,64 @@ namespace DogSalon.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly ITokenService _tokenService;
 
-        public AuthController(AppDbContext context)
+        public AuthController(AppDbContext context, ITokenService tokenService)
         {
             _context = context;
+            _tokenService = tokenService;
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register(User user)
+        public async Task<ActionResult<AuthResponse>> Register([FromBody] RegisterRequest req)
         {
-            if (await _context.Users.AnyAsync(u => u.Username == user.Username))
+            if (!ModelState.IsValid) return ValidationProblem(ModelState);
+
+            if (await _context.Users.AnyAsync(u => u.Username == req.Username))
+                return BadRequest(new ProblemDetails { Title = "Username already exists" });
+
+            bool adminStatus = false;
+            if (req.Role == "admin")
             {
-                return BadRequest("Username already exists");
+                if (req.AdminCode == "DS2026")
+                {
+                    adminStatus = true;
+                }
+                else
+                {
+                    return BadRequest(new ProblemDetails { Title = "קוד אישור מנהל אינו תקין 🛑" });
+                }
             }
 
-            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash);
+            var user = new User
+            {
+                Username = req.Username.Trim(),
+                FirstName = req.FirstName.Trim(),
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(req.Password),
+                IsAdmin = adminStatus 
+            };
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            return Ok(new { message = "Registration successful!" });
+            var token = _tokenService.CreateToken(user);
+
+            return Ok(new AuthResponse(user.Id, user.FirstName ?? "", token));
         }
 
         [HttpPost("login")]
-        public async Task<IActionResult> Login(User loginUser)
+        public async Task<ActionResult<AuthResponse>> Login([FromBody] LoginRequest req)
         {
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == loginUser.Username);
+            if (!ModelState.IsValid) return ValidationProblem(ModelState);
 
-            if (user == null || !BCrypt.Net.BCrypt.Verify(loginUser.PasswordHash, user.PasswordHash))
-            {
-                return Unauthorized("Invalid username or password");
-            }
+            var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == req.Username);
 
-            return Ok(new
-            {
-                message = $"Welcome back, {user.FirstName}!",
-                userId = user.Id,
-                firstName = user.FirstName
-            });
+            if (user == null || !BCrypt.Net.BCrypt.Verify(req.Password, user.PasswordHash))
+                return Unauthorized(new ProblemDetails { Title = "Invalid username or password" });
+
+            var token = _tokenService.CreateToken(user);
+
+            return Ok(new AuthResponse(user.Id, user.FirstName ?? "", token));
         }
     }
 }

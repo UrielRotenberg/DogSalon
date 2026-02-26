@@ -123,42 +123,92 @@
 }
 
 .businessHours {
-  width: 100%;
-  margin-top: 25px;
-  padding-top: 20px;
-  border-top: 1px dashed #e3d5ca;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+    width: 100%;
+    margin-top: 30px;
+    padding: 20px;
+    background: #fdfaf9; 
+    border-radius: 16px;
+    border: 1px solid #efebe9;
 }
 
 .hoursTitle {
-  color: #5d4037;
-  font-size: 15px;
-  margin: 0 0 5px 0;
-  font-weight: 800;
-  text-align: center;
+    color: #5d4037;
+    font-size: 16px;
+    margin-bottom: 15px;
+    font-weight: 800;
+    text-align: center;
+    letter-spacing: 0.5px;
+}
+
+.hoursGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
 }
 
 .hoursRow {
-  display: flex;
-  justify-content: space-between;
-  font-size: 14px;
-  color: #8d6e63;
-  padding: 0 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
 }
 
-.hoursRow span:first-child {
-  font-weight: 600;
+.dayLabel {
+    color: #8d6e63;
+    font-weight: 600;
+    font-size: 14px;
 }
 
-.closed {
-  color: #e74c3c;
-  font-weight: 800;
+.timeLabel {
+    color: #5d4037;
+    font-weight: 700;
+    font-size: 14px;
 }
 
-.helperText {
-  color: #8d6e63;
-  font-size: 14px;
-  margin: 15px 0;
+.closedRow {
+    border: 1px dashed #e74c3c;
+    background: #fff5f5;
+}
+
+.closedRow .timeLabel {
+    color: #e74c3c;
+}
+
+.contactFooter {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-top: 1px solid #efebe9;
+    padding-top: 15px;
+}
+
+.contactPill {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 15px;
+    background: white;
+    border: 1px solid #efebe9;
+    border-radius: 50px; 
+    transition: all 0.3s ease;
+}
+
+.contactPill:hover {
+    border-color: #d7ccc8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(93, 64, 55, 0.08);
+}
+
+.contactPill span {
+    font-size: 13px;
+    color: #5d4037;
+    font-weight: 600;
+}
+
+.pillIcon {
+    font-size: 16px;
 }

@@ -1,136 +1,77 @@
-﻿using DogSalon.API.Data;
-using DogSalon.API.Models;
+﻿using System.Security.Claims;
+using DogSalon.API.Contracts;
+using DogSalon.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Data.SqlClient;
 
 namespace DogSalon.API.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class AppointmentsController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IAppointmentsService _service;
 
-        public AppointmentsController(AppDbContext context)
+        public AppointmentsController(IAppointmentsService service)
         {
-            _context = context;
+            _service = service;
         }
 
-        [HttpGet("all")]
-        public async Task<IActionResult> GetAllAppointments()
+        private bool TryGetUserIdFromToken(out int userId)
         {
-            var appointments = await (from app in _context.Appointments
-                                      join user in _context.Users on app.UserId equals user.Id into userJoin
-                                      from u in userJoin.DefaultIfEmpty()
-                                      select new
-                                      {
-                                          app.Id,
-                                          app.UserId,
-                                          app.DogName,
-                                          app.DogSize,
-                                          app.AppointmentDate,
-                                          app.Status,
-                                          app.CreatedAt,
-                                          app.Price,
-                                          app.Discount,
-                                          app.DurationMinutes,
-                                          FirstName = u != null ? u.FirstName : "אורח"
-                                      }).ToListAsync();
-
-            return Ok(appointments);
+            var claim = User.FindFirstValue("userId") ?? User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.TryParse(claim, out userId);
         }
 
-        [HttpGet("user/{userId}")]
-        public async Task<IActionResult> GetUserAppointments(int userId)
+        [HttpGet("queue")]
+        public async Task<IActionResult> GetQueue([FromQuery] DateTime? from, [FromQuery] DateTime? to, [FromQuery] string? name, CancellationToken ct)
         {
-            var appointments = await _context.Appointments
-                .Where(a => a.UserId == userId)
-                .OrderByDescending(a => a.AppointmentDate)
-                .ToListAsync();
+            if (!TryGetUserIdFromToken(out var userId)) return Unauthorized();
+            var isAdmin = User.IsInRole("Admin");
+            var result = await _service.GetQueueAsync(userId, isAdmin, from, to, name, ct);
+            return Ok(result);
+        }
 
-            return Ok(appointments);
+        [HttpGet("me")]
+        public async Task<IActionResult> GetMyAppointments(CancellationToken ct)
+        {
+            if (!TryGetUserIdFromToken(out var userId)) return Unauthorized();
+            var result = await _service.GetMineAsync(userId, ct);
+            return Ok(result);
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateAppointment(Appointment appointment)
+        public async Task<IActionResult> CreateAppointment([FromBody] CreateAppointmentRequest req, CancellationToken ct)
         {
-            switch (appointment.DogSize)
+            if (!ModelState.IsValid) return ValidationProblem(ModelState);
+            if (!TryGetUserIdFromToken(out var userId)) return Unauthorized();
+
+            var result = await _service.CreateAsync(userId, req, ct);
+
+            return Ok(new
             {
-                case "קטן": appointment.Price = 100; appointment.DurationMinutes = 30; break;
-                case "בינוני": appointment.Price = 150; appointment.DurationMinutes = 60; break;
-                case "גדול": appointment.Price = 200; appointment.DurationMinutes = 90; break;
-                default: appointment.Price = 100; appointment.DurationMinutes = 30; break;
-            }
-
-            appointment.Discount = 0;
-
-            var countParam = new SqlParameter
-            {
-                ParameterName = "Count",
-                SqlDbType = System.Data.SqlDbType.Int,
-                Direction = System.Data.ParameterDirection.Output
-            };
-
-            await _context.Database.ExecuteSqlRawAsync(
-                "EXEC GetUserAppointmentCount @UserId = {0}, @Count = @Count OUTPUT",
-                appointment.UserId, countParam);
-
-            int pastAppsCount = (int)countParam.Value;
-
-            if (pastAppsCount >= 3)
-            {
-                appointment.Discount = 10;
-                appointment.Price = appointment.Price * 0.9m;
-            }
-
-            appointment.CreatedAt = DateTime.Now;
-            _context.Appointments.Add(appointment);
-            await _context.SaveChangesAsync();
-
-            return Ok(new { message = "התור נקבע בהצלחה!", price = appointment.Price, discount = appointment.Discount });
+                message = "התור נקבע בהצלחה!",
+                appointmentId = result.appointmentId,
+                price = result.price,
+                discount = result.discount
+            });
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAppointment(int id, Appointment updatedApp)
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> UpdateAppointment(int id, [FromBody] UpdateAppointmentRequest req, CancellationToken ct)
         {
-            var appointment = await _context.Appointments.FindAsync(id);
-            if (appointment == null) return NotFound();
-            if (appointment.UserId != updatedApp.UserId) return Forbid();
-
-            if (appointment.AppointmentDate.Date == DateTime.Today)
-            {
-                return BadRequest("לא ניתן לערוך תור שנקבע להיום.");
-            }
-
-            appointment.DogName = updatedApp.DogName;
-            appointment.DogSize = updatedApp.DogSize;
-            appointment.AppointmentDate = updatedApp.AppointmentDate;
-
-            if (updatedApp.DogSize == "קטן") { appointment.Price = 100; appointment.DurationMinutes = 30; }
-            else if (updatedApp.DogSize == "בינוני") { appointment.Price = 150; appointment.DurationMinutes = 60; }
-            else { appointment.Price = 200; appointment.DurationMinutes = 90; }
-
-            if (appointment.Discount > 0) appointment.Price *= 0.9m;
-
-            await _context.SaveChangesAsync();
-            return Ok(new { message = "התור עודכן בהצלחה", price = appointment.Price });
+            if (!ModelState.IsValid) return ValidationProblem(ModelState);
+            if (!TryGetUserIdFromToken(out var userId)) return Unauthorized();
+            var price = await _service.UpdateAsync(userId, id, req, ct);
+            return Ok(new { message = "התור עודכן בהצלחה", price });
         }
 
-        [HttpDelete("{id}/{userId}")]
-        public async Task<IActionResult> DeleteAppointment(int id, int userId)
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> DeleteAppointment(int id, CancellationToken ct)
         {
-            var appointment = await _context.Appointments.FindAsync(id);
-            if (appointment == null) return NotFound();
-            if (appointment.UserId != userId) return Forbid("אין לך הרשאה למחוק תור זה.");
-
-            if (appointment.AppointmentDate.Date == DateTime.Today)
-            {
-                return BadRequest("לא ניתן לבטל תור שנקבע להיום.");
-            }
-
-            _context.Appointments.Remove(appointment);
-            await _context.SaveChangesAsync();
+            if (!TryGetUserIdFromToken(out var userId)) return Unauthorized();
+            await _service.DeleteAsync(userId, id, ct);
             return Ok(new { message = "התור בוטל" });
         }
     }

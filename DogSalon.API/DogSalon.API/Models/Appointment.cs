@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DogSalon.API.Models
 {
@@ -7,8 +6,8 @@ namespace DogSalon.API.Models
     {
         public int Id { get; set; }
         public int UserId { get; set; }
-        public string DogName { get; set; }
-        public string DogSize { get; set; }
+        public string DogName { get; set; } = string.Empty;
+        public string DogSize { get; set; } = string.Empty;
         public decimal Price { get; set; }
         public int DurationMinutes { get; set; }
         public int Discount { get; set; }

@@ -58,6 +58,32 @@ const Auth = ({ isLogin, setIsLogin, formData, setFormData, handleAuth, attempte
             />
           </div>
 
+          {!isLogin && (
+            <div className={styles.adminSection}>
+              <label className={styles.checkboxLabel}>
+                <input
+                  type="checkbox"
+                  checked={formData.isAdminRequested || false}
+                  onChange={(e) => setFormData({ ...formData, isAdminRequested: e.target.checked })}
+                />
+                <span>בקשת חשבון מנהל</span>
+              </label>
+
+              {formData.isAdminRequested && (
+                <div className={styles.inputGroup}>
+                  <label>קוד אישור מנהל</label>
+                  <input
+                    type="password"
+                    placeholder="הזן קוד סודי למנהלים"
+                    value={formData.adminCode || ''}
+                    onChange={(e) => setFormData({ ...formData, adminCode: e.target.value })}
+                    className={attemptedSubmit && !formData.adminCode ? styles.errorField : ''}
+                  />
+                </div>
+              )}
+            </div>
+          )}
+
           <button type="submit" className={styles.submitBtn}>
             {isLogin ? 'התחברות' : 'סיום הרשמה'}
           </button>

@@ -11,5 +11,6 @@ namespace DogSalon.API.Models
         [Required]
         public string PasswordHash { get; set; } = string.Empty;
         public string? FirstName { get; set; }
+        public bool IsAdmin { get; set; } = false;
     }
 }

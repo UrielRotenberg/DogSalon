@@ -1,41 +1,38 @@
-import { useAuth } from './hooks/useAuth';
-import Auth from './pages/Auth';
-import Dashboard from './pages/Dashboard';
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import './App.css';
+import { Routes, Route, Navigate } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-function App() {
-  const { 
-    user, isLogin, formData, setFormData, 
-    attemptedSubmit, toggleAuthMode, handleAuth, logout 
-  } = useAuth();
-
+export default function App() {
   return (
-    <div className="App">
-      {!user ? (
-        <Auth 
-          isLogin={isLogin} 
-          setIsLogin={toggleAuthMode} 
-          formData={formData} 
-          setFormData={setFormData} 
-          handleAuth={handleAuth}
-          attemptedSubmit={attemptedSubmit} 
+    <AuthProvider>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <Dashboard />
+            </ProtectedRoute>
+          }
         />
-      ) : (
-        <Dashboard user={user} onLogout={logout} />
-      )}
-
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
       <ToastContainer 
         position="top-right"
         autoClose={3000}
-        theme="colored"
-        rtl={true}
-        pauseOnHover
+        hideProgressBar={false}
+        newestOnTop
         closeOnClick
+        rtl={true}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
       />
-    </div>
+    </AuthProvider>
   );
 }
-
-export default App;
